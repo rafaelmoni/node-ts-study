@@ -27,39 +27,93 @@ Explanation: You will start at index 0.
 The total cost is 6.
 */
 
-const minCostClimbingStairs = (stairs: number[]): number => {
-  const startIndex = stairs[1] > stairs[0] ? 0 : 1;
-  let totalCost = 0;
-  let jump = false;
-  for (let i = startIndex; i < stairs.length; i++) {
-    if (jump) {
-      jump = false;
-      continue;
+/*
+export const minCostClimbingStairs = (cost: number[], log = false): number => {
+  if (!log) console.log = () => {};
+  const lastIndex = cost.length - 1;
+
+  const loopThrough = (start: number) => {
+    console.log("running on", JSON.stringify(cost), { start });
+    let totalCost = 0;
+    let canJump = start === 0;
+
+    for (let i = start; i < cost.length; i++) {
+      console.log();
+      console.log("i:", i);
+      const current = cost[i];
+      const next = cost[i + 1];
+      const latest = cost[i + 2] || 0;
+
+      if (i === 0)
+        console.log({
+          canJump,
+          current,
+          next,
+          latest,
+          first: current >= next && next <= current + latest,
+          second: current + latest > next,
+          third: current + latest > next && i + 2 === lastIndex,
+        });
+
+      if (
+        canJump &&
+        (current >= next ||
+          (current + latest > next && i + 2 === lastIndex) ||
+          i === lastIndex)
+      ) {
+        console.log("jumped i:", current);
+        canJump = false;
+        continue;
+      }
+      console.log("adding:", current);
+      totalCost += current;
+      canJump = true;
     }
-    console.log("i =>", i);
-    const latestIndex = i + 2;
-    if (latestIndex > stairs.length) continue;
-    console.log("adding =>", stairs[i]);
-    totalCost += stairs[i];
-    if (stairs[i + 1] > stairs[latestIndex]) jump = true;
-  }
-  return totalCost;
+
+    return totalCost;
+  };
+
+  const i0 = loopThrough(0);
+  const i1 = loopThrough(1);
+
+  console.log("i0", i0);
+  console.log("i1", i1);
+
+  return i0 > i1 ? i1 : i0;
 };
 
-console.log(minCostClimbingStairs([10, 15, 20]));
-console.log(minCostClimbingStairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]));
-
-/*
-[
-  [10, 15, 20],
-  //[1, 100, 1, 1, 1, 100, 1, 1, 100, 1],
-].forEach((exercise) => {
-  console.log(
-    `Minimum cost to climb stairs: [\n${JSON.stringify(
-      exercise.join(",")
-    )}\n to top is:`,
-    minCostClimbingStairs(exercise),
-    "\n"
-  );
-});
+//console.log(minCostClimbingStairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1], true));
+//console.log(minCostClimbingStairs([0, 1, 2, 2], true));
+//console.log(minCostClimbingStairs([1, 2, 2, 2], true));
 */
+
+//The solution above consider analysis between the next two steps, which is not (wasn't supposed to be) the real objective of the exercise
+//I think it lacks more detailed informations...
+
+export const minCostClimbingStairs = (cost: number[]): number => {
+  //const getCosts = (index: number) => {
+  //  let total = 0;
+  //  for (let i = index; i < cost.length; i++) {
+  //    total += cost[i] > cost[i + 1] ? cost[i + 1] : cost[i];
+  //  }
+  //  return total;
+  //};
+
+  //const t0 = getCosts(0);
+  //const t1 = getCosts(1);
+
+  //return t0 > t1 ? t1 : t0;
+
+  console.log("start:", JSON.stringify(cost));
+  for (let i = 2; i < cost.length; i++) {
+    cost[i] += Math.min(cost[i - 2], cost[i - 1]);
+    console.log("cost:", JSON.stringify(cost));
+  }
+
+  console.log({
+    a: cost[cost.length - 1],
+    b: cost[cost.length - 2],
+  });
+
+  return Math.min(cost[cost.length - 1], cost[cost.length - 2]);
+};
